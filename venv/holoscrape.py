@@ -55,13 +55,26 @@ for n in range(0, len(channel_names)):
         channel_names = driver.find_elements_by_css_selector("#channel-info #title")
         sub_counts = driver.find_elements_by_id("thumbnail-attribution")
         print(channel_names[n].text)
-        print(sub_counts[n].text.split()[0])
+        print(sub_counts[n].text)
         time.sleep(5)
         channel_names[n].click()
 
     #Adding channel names and sub count data into empty list for dataframe
-    youtube_channel_names.append(channel_names[n].text)
-    youtube_sub_count.append(sub_counts[n].text)
+    new_channel = channel_names[n].text.split()
+    try:
+        youtube_channel_names.append(f"{new_channel[0]} {new_channel[1]}")
+    except IndexError:
+        new_channel = channel_names[n].text.split("。")
+        youtube_channel_names.append(f"{new_channel[0]} {new_channel[1]}")
+
+    #Getting Rid of "M" and "K" from number
+    if "M" in sub_counts[n].text.split()[0]:
+        split_sub = sub_counts[n].text.split("M")
+        youtube_sub_count.append(float(split_sub[0]) * 1000)
+    else:
+        split_sub = sub_counts[n].text.split("K")
+        youtube_sub_count.append(float(split_sub[0]))
+
 
     time.sleep(5)
 
@@ -93,7 +106,7 @@ for n in range(0, len(channel_names)):
             followers = driver.find_element_by_xpath('//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[2]/div/div/div/div/div[5]/div[2]/a/span[1]/span')
         except NoSuchElementException:
             try:
-                #Anya and Ollie Exception
+                # Exception for Anya and Ollie
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
                 time.sleep(3)
@@ -103,7 +116,7 @@ for n in range(0, len(channel_names)):
                 time.sleep(10)
                 followers = driver.find_element_by_xpath('//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[2]/div/div/div/div/div[5]/div[2]/a/span[1]/span')
             except NoSuchElementException:
-                #Iofi Exception
+                # Exception for Iofi
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
                 time.sleep(3)
@@ -117,11 +130,17 @@ for n in range(0, len(channel_names)):
     print(followers.text)
 
     #Adding Twitter follower data into list
-    twitter_follower_count.append(followers.text)
+    # Getting Rid of "M" and "K" from number
+    if "M" in followers.text.split()[0]:
+        split_follower = followers.text.split("M")
+        twitter_follower_count.append(float(split_follower[0]) * 1000)
+    else:
+        split_follower = followers.text.split("K")
+        twitter_follower_count.append(split_follower[0])
 
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
-    #Undo to channel list
+    #Go to channel list
     for r in range(2):
         driver.back()
 
@@ -136,6 +155,11 @@ data_dict = {
 }
 
 data = pandas.DataFrame(data_dict)
-print(data)
+
+# data["Difference"] = (data["YT Sub Count"] - data["Twitter Follower"])
 
 data.to_csv("Hololive sub count vs followers.csv")
+
+frame = pandas.read_csv("Hololive sub count vs followers.csv")
+
+print(frame.head())
