@@ -35,7 +35,7 @@ youtube_channel_names = []
 youtube_sub_count = []
 twitter_follower_count = []
 
-for n in range(0, len(channel_names), 33):
+for n in range(0, len(channel_names)):
     #Channel List
     time.sleep(5)
 
@@ -145,10 +145,9 @@ for n in range(0, len(channel_names), 33):
     driver.switch_to.window(driver.window_handles[0])
 
     #Go to channel list
+
     for r in range(2):
         driver.back()
-
-
 
     print(f"Index: {n}")
 
