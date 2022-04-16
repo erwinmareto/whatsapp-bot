@@ -35,7 +35,7 @@ youtube_channel_names = []
 youtube_sub_count = []
 twitter_follower_count = []
 
-for n in range(0, len(channel_names)):
+for n in range(0, len(channel_names), 33):
     #Channel List
     time.sleep(5)
 
@@ -136,7 +136,7 @@ for n in range(0, len(channel_names)):
         twitter_follower_count.append(float(split_follower[0]) * 1000)
     elif "K" in followers.text.split()[0]:
         split_follower = followers.text.split("K")
-        twitter_follower_count.append(split_follower[0])
+        twitter_follower_count.append(float(split_follower[0]))
     else:
         split_follower = followers.text.split("万")
         twitter_follower_count.append(float(split_follower[0]) * 10)
