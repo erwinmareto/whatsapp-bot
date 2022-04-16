@@ -134,15 +134,20 @@ for n in range(0, len(channel_names)):
     if "M" in followers.text.split()[0]:
         split_follower = followers.text.split("M")
         twitter_follower_count.append(float(split_follower[0]) * 1000)
-    else:
+    elif "K" in followers.text.split()[0]:
         split_follower = followers.text.split("K")
         twitter_follower_count.append(split_follower[0])
+    else:
+        split_follower = followers.text.split("万")
+        twitter_follower_count.append(float(split_follower[0]) * 10)
 
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
+
     #Go to channel list
     for r in range(2):
         driver.back()
+
 
 
     print(f"Index: {n}")
@@ -156,10 +161,11 @@ data_dict = {
 
 data = pandas.DataFrame(data_dict)
 
-# data["Difference"] = (data["YT Sub Count"] - data["Twitter Follower"])
+data["Difference"] = (data["YT Sub Count"] - data["Twitter Follower"])
 
 data.to_csv("Hololive sub count vs followers.csv")
 
 frame = pandas.read_csv("Hololive sub count vs followers.csv")
 
 print(frame.head())
+
