@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 import time
+import pandas
 
 url = "https://www.youtube.com/channel/UC6eWCld0KwmyHFbAqK3V-Rw/channels"
 chrome_driver_path = "C:/Development/chromedriver.exe"
@@ -30,6 +31,10 @@ for name in channel_names:
 
 pixels = 500
 rounds = 0
+youtube_channel_names = []
+youtube_sub_count = []
+twitter_follower_count = []
+
 for n in range(0, len(channel_names)):
     #Channel List
     time.sleep(5)
@@ -53,6 +58,10 @@ for n in range(0, len(channel_names)):
         print(sub_counts[n].text)
         time.sleep(5)
         channel_names[n].click()
+
+    #Adding channel names and sub count data into empty list for dataframe
+    youtube_channel_names.append(channel_names[n].text)
+    youtube_sub_count.append(sub_counts[n].text)
 
     time.sleep(5)
 
@@ -107,6 +116,9 @@ for n in range(0, len(channel_names)):
 
     print(followers.text)
 
+    #Adding Twitter follower data into list
+    twitter_follower_count.append(followers.text)
+
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
     #Undo to channel list
@@ -116,4 +128,14 @@ for n in range(0, len(channel_names)):
 
     print(f"Index: {n}")
 
+#Create dataframe and turn into csv
+data_dict = {
+    "Channels": youtube_channel_names,
+    "YT Sub Count": youtube_sub_count,
+    "Twitter Follower": twitter_follower_count
+}
 
+data = pandas.DataFrame(data_dict)
+print(data)
+
+data.to_csv("Hololive sub count vs followers")
