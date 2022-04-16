@@ -41,7 +41,7 @@ for n in range(0, len(channel_names)):
 
     try:
         print(channel_names[n].text)
-        print(sub_counts[n].text)
+        print(sub_counts[n].text.split()[0])
         time.sleep(5)
         channel_names[n].click()
     except StaleElementReferenceException:
@@ -55,7 +55,7 @@ for n in range(0, len(channel_names)):
         channel_names = driver.find_elements_by_css_selector("#channel-info #title")
         sub_counts = driver.find_elements_by_id("thumbnail-attribution")
         print(channel_names[n].text)
-        print(sub_counts[n].text)
+        print(sub_counts[n].text.split()[0])
         time.sleep(5)
         channel_names[n].click()
 
@@ -138,4 +138,4 @@ data_dict = {
 data = pandas.DataFrame(data_dict)
 print(data)
 
-data.to_csv("Hololive sub count vs followers")
+data.to_csv("Hololive sub count vs followers.csv")
